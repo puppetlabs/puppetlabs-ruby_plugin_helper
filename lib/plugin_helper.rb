@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # The RubyPluginHelper module provides utility methods for processing and applying
 # mappings to data structures, specifically for use with Puppet inventory data.
 # It includes methods for extracting required data lookups from templates and
@@ -40,7 +42,7 @@ module RubyPluginHelper
         value
       else
         msg = 'target_mapping values must be a string, array, or hash. ' \
-          "Got #{value.class}"
+              "Got #{value.class}"
         raise StandardError, msg
       end
     end
@@ -51,8 +53,8 @@ module RubyPluginHelper
   # parents.
   def postwalk_vals(data, skip_top = false, &block)
     new_data = if data.is_a? Hash
-                 data.each_with_object({}) do |(k, v), acc|
-                   acc[k] = postwalk_vals(v, &block)
+                 data.transform_values do |v|
+                   postwalk_vals(v, &block)
                  end
                elsif data.is_a? Array
                  data.map { |v| postwalk_vals(v, &block) }
