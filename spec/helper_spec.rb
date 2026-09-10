@@ -1,9 +1,11 @@
-require_relative '../lib/plugin_helper.rb'
+# frozen_string_literal: true
+
+require_relative '../lib/plugin_helper'
 
 describe RubyPluginHelper do
-  include RubyPluginHelper
+  include described_class
 
-  context '#required_data' do
+  describe '#required_data' do
     let(:template) do
       { name: 'public_dns_name',
         uri: 'public_dns_name',
@@ -23,26 +25,26 @@ describe RubyPluginHelper do
     end
   end
 
-  context '#apply_mapping' do
+  describe '#apply_mapping' do
     let(:template) do
       { name: 'look.up',
         config: {
           ssh: {
             user: 'user.strange',
-            'run-as-command': 'im.an.array'
-          }
+            'run-as-command': 'im.an.array',
+          },
         } }
     end
     let(:lookups) do
       [{
         'look' => { 'up' => 'name' },
         'user' => { 'strange' => 'user' },
-        'im' => { 'an' => { 'array' => ['sudo', 'let', 'me', 'in'] } }
+        'im' => { 'an' => { 'array' => ['sudo', 'let', 'me', 'in'] } },
       },
        {
          'look' => { 'up' => 'down' },
          'user' => { 'strange' => 'charm' },
-         'im' => { 'an' => { 'array' => ['sudo', 'top', 'bottom'] } }
+         'im' => { 'an' => { 'array' => ['sudo', 'top', 'bottom'] } },
        }]
     end
     let(:output) do
@@ -50,15 +52,15 @@ describe RubyPluginHelper do
          config: {
            ssh: {
              user: 'user',
-             'run-as-command': ['sudo', 'let', 'me', 'in']
-           }
+             'run-as-command': ['sudo', 'let', 'me', 'in'],
+           },
          } },
        { name: 'down',
          config: {
            ssh: {
              user: 'charm',
-             'run-as-command': ['sudo', 'top', 'bottom']
-           }
+             'run-as-command': ['sudo', 'top', 'bottom'],
+           },
          } }]
     end
 
@@ -67,7 +69,7 @@ describe RubyPluginHelper do
     end
 
     it 'raises an error if a lookup is not a string, array, or hash' do
-      expect { apply_mapping({ 'int': 2 }, [{ 2 => '2' }]) }
+      expect { apply_mapping({ int: 2 }, [{ 2 => '2' }]) }
         .to raise_error(StandardError, %r{string, array, or hash. Got Integer})
     end
   end
